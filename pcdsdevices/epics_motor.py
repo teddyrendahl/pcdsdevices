@@ -44,6 +44,11 @@ class EpicsMotor(EpicsMotor, FltMvInterface):
     # Additional soft limit configurations
     low_soft_limit = Component(EpicsSignal, ".LLM")
     high_soft_limit = Component(EpicsSignal, ".HLM")
+    # These limit switch fields are monitored to avoid any `caget` calls in
+    # subscriptions. In particular, ophyd.EpicsMotor._move_changed makes calls
+    # to either limit switch depending on direction of motion
+    low_limit_switch = Component(EpicsSignalRO, ".LLS", auto_monitor=True)
+    high_limit_switch = Component(EpicsSignalRO, ".HLS", auto_monitor=True)
     # Disable missing field that our EPICS motor record lacks
     # This attribute is tracked by the _pos_changed callback
     direction_of_travel = Component(Signal)
