@@ -1,6 +1,8 @@
 import logging
+from enum import Enum
 
-from ophyd import Device, EpicsSignal, EpicsSignalRO, Component as Cpt
+from ophyd import (Device, EpicsSignal, EpicsSignalRO, Component as Cpt,
+                   FormattedComponent as FCpt)
 from ophyd.status import DeviceStatus, SubscriptionStatus
 from ophyd.utils.epics_pvs import raise_if_disconnected
 from ophyd.flyers import FlyerInterface, MonitorFlyerMixin
@@ -163,3 +165,31 @@ class EventSequencer(Device, MonitorFlyerMixin, FlyerInterface):
         """Stop the EventSequencer"""
         logger.debug("Stopping the EventSequencer")
         self.play_control.put(0)
+
+
+class EventStep(Device):
+    """
+    Individual configurable step in EventSequence
+    """
+    eventcode = FCpt(EpicsSignal,
+                     '{self.prefix}:EC_{self._seq_no}:{self.step}')
+    delta_beam = FCpt(EpicsSignal,
+                     '{self.prefix}:BD_{self._seq_no}:{self.step}')
+    fiducial = FCpt(EpicsSignal,
+                    '{self.prefix}:FD_{self._seq_no}:{self.step}')
+    comment = FCpt(EpicsSignal,
+                   '{self.prefix}:EC_{self._seq_no}:{self.step}.DESC')
+
+    _default_configuration_attrs = ('eventcode', 'delta_beam', 'fiducial',
+                                    'comment')
+
+    def __init__(self, prefix, seq_no, step, **kwargs):
+        # Store both prefix and step number
+        self.step = str(step).zfill(2)
+        self._seq_no = seq_no
+        super().__init__(prefix, **kwargs)
+
+    def clear(self):
+        """Clear all step information"""
+        self.configure({'eventcode': 0, 'delta_beam': 0,
+                        'fiducial': 0, 'comment': ''})
