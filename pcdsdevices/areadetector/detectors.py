@@ -11,7 +11,7 @@ from ophyd.areadetector import cam
 from ophyd.areadetector.base import ADComponent
 from ophyd.areadetector.detectors import DetectorBase
 from ophyd.device import Component as Cpt
-from .plugins import (ColorConvPlugin, HDF5Plugin, ImagePlugin, JPEGPlugin,
+from .plugins import (ColorConvPlugin, HDF5Plugin, JPEGPlugin,
                       NetCDFPlugin, OverlayPlugin, ProcessPlugin, ROIPlugin,
                       StatsPlugin, TIFFPlugin, TransformPlugin, NexusPlugin)
 
@@ -80,23 +80,12 @@ class PCDSDetector(PCDSDetectorBase):
     Subclasses should replace 'cam' with that of the respective detector, such
     as `ophyd.areadetector.cam.PilatusDetectorCam` for the Pilatus detector.
     """
-    image1 = Cpt(ImagePlugin, 'IMAGE1:', read_attrs=['array_data'],
-                 doc='Image plugin for general usage')
-    image1_roi = Cpt(ROIPlugin, 'IMAGE1:ROI:')
-    image1_cc = Cpt(ColorConvPlugin, 'IMAGE1:CC:')
-    image1_proc = Cpt(ProcessPlugin, 'IMAGE1:Proc:')
-    image1_over = Cpt(OverlayPlugin, 'IMAGE1:Over:')
-    image2 = Cpt(ImagePlugin, 'IMAGE2:', read_attrs=['array_data'],
-                 doc='Image plugin used for the camera viewer')
-    image2_roi = Cpt(ROIPlugin, 'IMAGE2:ROI:')
-    image2_cc = Cpt(ColorConvPlugin, 'IMAGE2:CC:')
-    image2_proc = Cpt(ProcessPlugin, 'IMAGE2:Proc:')
-    image2_over = Cpt(OverlayPlugin, 'IMAGE2:Over:')
-    thumbnail = Cpt(ImagePlugin, 'THUMBNAIL:')
-    thumbnail_roi = Cpt(ROIPlugin, 'THUMBNAIL:ROI:')
-    thumbnail_cc = Cpt(ColorConvPlugin, 'THUMBNAIL:CC:')
-    thumbnail_proc = Cpt(ProcessPlugin, 'THUMBNAIL:Proc:')
-    thumbnail_over = Cpt(OverlayPlugin, 'THUMBNAIL:Over:')
+    image1 = Cpt(ImageStream, 'IMAGE1:', read_attrs=['array_data'],
+                 doc='Image used for data')
+    image2 = Cpt(ImageStream, 'IMAGE2:', read_attrs=['array_data'],
+                 doc='Image used for the camera viewer')
+    thumbnail = Cpt(ImageStream, 'THUMBNAIL:', read_attrs=['array_data'],
+                    doc='Image user for thumbnail')
     cc1 = Cpt(ColorConvPlugin, 'CC1:')
     cc2 = Cpt(ColorConvPlugin, 'CC2:')
     hdf51 = Cpt(HDF5Plugin, 'HDF51:')
